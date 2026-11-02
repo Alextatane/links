@@ -150,6 +150,69 @@
 </style>
 </head>
 <body>
+  <!-- ===== INTRO ANIMATION — rap clip style (paste right after <body>) ===== -->
+<style>
+  #intro{position:fixed;inset:0;z-index:9999;background:#000;display:grid;place-items:center;overflow:hidden;cursor:pointer}
+  #intro::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:6;
+    background:repeating-linear-gradient(to bottom,rgba(255,255,255,.04) 0 1px,transparent 1px 3px)}
+  #intro .flash{position:absolute;inset:0;background:#fff;opacity:0;z-index:5;pointer-events:none}
+  #intro .flash.red{background:#ff2b45}
+  #intro .word{position:relative;z-index:4;display:flex;font-family:Anton,Impact,sans-serif;font-size:clamp(46px,14vw,120px);letter-spacing:.04em;line-height:1;color:#fff}
+  #intro .word{opacity:0}
+  #intro .word.show{opacity:1;animation:slam .3s cubic-bezier(.2,.9,.3,1.2) forwards}
+  #intro .big{position:absolute;z-index:4;font-family:Anton,Impact,sans-serif;font-size:clamp(160px,55vw,420px);line-height:1;color:#fff;opacity:0;
+    text-shadow:0 0 10px rgba(255,43,69,.9),0 0 40px rgba(255,43,69,.6)}
+  #intro .big.on{animation:slam .2s cubic-bezier(.2,.9,.3,1.2) forwards}
+  @keyframes slam{0%{opacity:1;transform:scale(3.2);filter:blur(10px)}70%{transform:scale(.92);filter:blur(0)}100%{opacity:1;transform:scale(1);filter:blur(0);
+    text-shadow:0 0 6px rgba(255,43,69,.9),0 0 22px rgba(255,43,69,.6)}}
+  #intro.shake .word{animation:shake .14s linear}
+  @keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(-6px,3px)}50%{transform:translate(5px,-4px)}75%{transform:translate(-3px,-2px)}100%{transform:translate(0,0)}}
+  /* RGB split glitch at the end */
+  #intro.glitch .word{animation:rgb .45s steps(2) infinite}
+  @keyframes rgb{0%{text-shadow:-5px 0 #ff2b45,5px 0 #25f4ee;transform:translate(0,0) skewX(0)}
+    25%{text-shadow:6px 0 #ff2b45,-6px 0 #25f4ee;transform:translate(-4px,2px) skewX(-6deg)}
+    50%{text-shadow:-3px 0 #ff2b45,3px 0 #25f4ee;transform:translate(3px,-1px) skewX(4deg)}
+    75%{text-shadow:8px 0 #ff2b45,-8px 0 #25f4ee;transform:translate(-2px,0) skewX(0)}
+    100%{text-shadow:-5px 0 #ff2b45,5px 0 #25f4ee;transform:translate(0,0)}}
+  #intro.out{animation:introOut .45s ease forwards}
+  @keyframes introOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.15)}}
+  #intro.gone{display:none}
+  @media (prefers-reduced-motion:reduce){#intro{display:none}}
+</style>
+<div id="intro">
+  <div class="big" id="introBig"></div>
+  <div class="word" id="introWord">ALEXTATANE</div>
+  <div class="flash" id="introFlash"></div>
+</div>
+<script>
+(function(){
+  const TEXT="ALEXTATANE";          // text of the intro
+  const STEP=150;                   // ms each letter stays on screen
+  const el=document.getElementById('intro'), w=document.getElementById('introWord'), big=document.getElementById('introBig'), fl=document.getElementById('introFlash');
+  w.textContent=TEXT; const letters=[...TEXT]; let timers=[], done=false;
+  const at=(ms,fn)=>timers.push(setTimeout(fn,ms));
+  function flash(op,dur,red){ fl.classList.toggle('red',!!red); fl.style.transition='none'; fl.style.opacity=op;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ fl.style.transition=`opacity ${dur}ms ease-out`; fl.style.opacity=0; })); }
+  function shake(){ el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
+
+  // 2. one letter at a time: each one replaces the previous, with a flash + shake
+  const start=0;
+  letters.forEach((c,i)=>at(start+i*STEP,()=>{
+    big.classList.remove('on'); void big.offsetWidth; big.textContent=c; big.classList.add('on');
+    flash(i%3===0?.6:.3,130,i%2===1); shake(); }));
+  const end=start+letters.length*STEP;
+  // 3. full name slams in, glitch + strobe, then big white flash and cut to the site
+  at(end,()=>{ big.style.display='none'; w.classList.add('show'); flash(1,160); shake(); });
+  at(end+260,()=>{ el.classList.add('glitch'); flash(.6,90,true); });
+  at(end+420,()=>flash(.8,90));
+  at(end+620,()=>flash(.5,90,true));
+  at(end+900,finish);
+  function finish(){ if(done) return; done=true; timers.forEach(clearTimeout);
+    el.classList.remove('glitch'); flash(1,380); el.classList.add('out'); setTimeout(()=>el.classList.add('gone'),460); }
+  el.addEventListener('click',finish); // tap to skip
+})();
+</script>
+<!-- ===== END INTRO ===== -->
 <canvas id="stars"></canvas>
 <canvas id="fx"></canvas>
 
