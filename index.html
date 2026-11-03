@@ -150,7 +150,7 @@
 </style>
 </head>
 <body>
-  <!-- ===== INTRO ANIMATION — rap clip style (paste right after <body>) ===== -->
+<!-- ===== INTRO ANIMATION — rap clip style + glitch (paste right after <body>) ===== -->
 <style>
   #intro{position:fixed;inset:0;z-index:9999;background:#000;display:grid;place-items:center;overflow:hidden;cursor:pointer}
   #intro::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:6;
@@ -163,6 +163,15 @@
   #intro .big{position:absolute;z-index:4;font-family:Anton,Impact,sans-serif;font-size:clamp(160px,55vw,420px);line-height:1;color:#fff;opacity:0;
     text-shadow:0 0 10px rgba(255,43,69,.9),0 0 40px rgba(255,43,69,.6)}
   #intro .big.on{animation:slam .2s cubic-bezier(.2,.9,.3,1.2) forwards}
+  /* glitch slices (red / cyan copies cut into bands) */
+  #intro .big::before,#intro .big::after,#intro .word::before,#intro .word::after{content:attr(data-t);position:absolute;inset:0;pointer-events:none;text-shadow:none}
+  #intro .big::before,#intro .word::before{color:#ff2b45;mix-blend-mode:screen;animation:sliceA .3s steps(1) infinite}
+  #intro .big::after,#intro .word::after{color:#25f4ee;mix-blend-mode:screen;animation:sliceB .3s steps(1) infinite}
+  @keyframes sliceA{0%{clip-path:inset(8% 0 70% 0);transform:translate(-7px,0)}20%{clip-path:inset(55% 0 20% 0);transform:translate(6px,0)}
+    40%{clip-path:inset(30% 0 50% 0);transform:translate(-4px,0)}60%{clip-path:inset(75% 0 5% 0);transform:translate(8px,0)}80%{clip-path:inset(0 0 85% 0);transform:translate(-5px,0)}100%{clip-path:inset(45% 0 40% 0);transform:translate(3px,0)}}
+  @keyframes sliceB{0%{clip-path:inset(60% 0 15% 0);transform:translate(6px,0)}20%{clip-path:inset(10% 0 75% 0);transform:translate(-8px,0)}
+    40%{clip-path:inset(80% 0 2% 0);transform:translate(5px,0)}60%{clip-path:inset(20% 0 60% 0);transform:translate(-6px,0)}80%{clip-path:inset(40% 0 45% 0);transform:translate(7px,0)}100%{clip-path:inset(5% 0 80% 0);transform:translate(-3px,0)}}
+  #intro .word{position:relative}
   @keyframes slam{0%{opacity:1;transform:scale(3.2);filter:blur(10px)}70%{transform:scale(.92);filter:blur(0)}100%{opacity:1;transform:scale(1);filter:blur(0);
     text-shadow:0 0 6px rgba(255,43,69,.9),0 0 22px rgba(255,43,69,.6)}}
   #intro.shake .word{animation:shake .14s linear}
@@ -170,7 +179,7 @@
   /* RGB split glitch at the end */
   #intro.glitch .word{animation:rgb .45s steps(2) infinite}
   @keyframes rgb{0%{text-shadow:-5px 0 #ff2b45,5px 0 #25f4ee;transform:translate(0,0) skewX(0)}
-    25%{text-shadow:6px 0 #ff2b45,-6px 0 #25f4ee;transform:translate(-4px,2px) skewX(-6deg)}  
+    25%{text-shadow:6px 0 #ff2b45,-6px 0 #25f4ee;transform:translate(-4px,2px) skewX(-6deg)}
     50%{text-shadow:-3px 0 #ff2b45,3px 0 #25f4ee;transform:translate(3px,-1px) skewX(4deg)}
     75%{text-shadow:8px 0 #ff2b45,-8px 0 #25f4ee;transform:translate(-2px,0) skewX(0)}
     100%{text-shadow:-5px 0 #ff2b45,5px 0 #25f4ee;transform:translate(0,0)}}
@@ -187,9 +196,9 @@
 <script>
 (function(){
   const TEXT="ALEXTATANE";          // text of the intro
-  const STEP=150;                   // ms each letter stays on screen
+  const STEP=85;                    // ms each letter stays on screen
   const el=document.getElementById('intro'), w=document.getElementById('introWord'), big=document.getElementById('introBig'), fl=document.getElementById('introFlash');
-  w.textContent=TEXT; const letters=[...TEXT]; let timers=[], done=false;
+  w.textContent=TEXT; w.dataset.t=TEXT; const letters=[...TEXT]; let timers=[], done=false;
   const at=(ms,fn)=>timers.push(setTimeout(fn,ms));
   function flash(op,dur,red){ fl.classList.toggle('red',!!red); fl.style.transition='none'; fl.style.opacity=op;
     requestAnimationFrame(()=>requestAnimationFrame(()=>{ fl.style.transition=`opacity ${dur}ms ease-out`; fl.style.opacity=0; })); }
@@ -198,15 +207,14 @@
   // 2. one letter at a time: each one replaces the previous, with a flash + shake
   const start=0;
   letters.forEach((c,i)=>at(start+i*STEP,()=>{
-    big.classList.remove('on'); void big.offsetWidth; big.textContent=c; big.classList.add('on');
+    big.classList.remove('on'); void big.offsetWidth; big.textContent=c; big.dataset.t=c; big.classList.add('on');
     flash(i%3===0?.6:.3,130,i%2===1); shake(); }));
   const end=start+letters.length*STEP;
   // 3. full name slams in, glitch + strobe, then big white flash and cut to the site
   at(end,()=>{ big.style.display='none'; w.classList.add('show'); flash(1,160); shake(); });
-  at(end+260,()=>{ el.classList.add('glitch'); flash(.6,90,true); });
-  at(end+420,()=>flash(.8,90));
-  at(end+620,()=>flash(.5,90,true));
-  at(end+900,finish);
+  at(end+200,()=>{ el.classList.add('glitch'); flash(.6,80,true); });
+  at(end+360,()=>flash(.8,80));
+  at(end+650,finish);
   function finish(){ if(done) return; done=true; timers.forEach(clearTimeout);
     el.classList.remove('glitch'); flash(1,380); el.classList.add('out'); setTimeout(()=>el.classList.add('gone'),460); }
   el.addEventListener('click',finish); // tap to skip
