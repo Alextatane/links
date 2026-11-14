@@ -66,7 +66,7 @@
   @keyframes blink{50%{opacity:.3}}
 
   /* ============ LINK BLOCKS ============ */
-  .list{display:flex;flex-direction:column;gap:12px;margin-top:48px}
+  .list{display:flex;flex-direction:column;gap:12px;margin-top:28px}
   .item{--mx:50%;--my:50%;--rx:0deg;--ry:0deg;--ty:0px;--s:1;
     position:relative;display:flex;align-items:center;gap:16px;padding:16px 20px 16px 18px;border-radius:16px;
     background:rgba(255,255,255,.025);border:1px solid var(--line);overflow:hidden;isolation:isolate;cursor:pointer;user-select:none;
@@ -141,6 +141,42 @@
 
   footer{text-align:center;margin-top:64px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:#55555f}
   footer b{color:var(--red);font-weight:500}
+
+
+  /* ============ FEATURED BLOCK (1K Views = $1) ============ */
+  .feat{--g:#1db954;position:relative;display:block;margin-top:44px;padding:22px 20px 20px;border-radius:22px;isolation:isolate;overflow:hidden;cursor:pointer;
+    background:radial-gradient(120% 140% at 0% 0%,rgba(29,185,84,.22),transparent 55%),linear-gradient(160deg,#0d1410,#07090a);
+    box-shadow:0 0 0 1px rgba(29,185,84,.25),0 20px 50px -18px rgba(29,185,84,.45);
+    transition:transform .55s var(--spring),box-shadow .4s;animation:featGlow 3s ease-in-out infinite}
+  @keyframes featGlow{50%{box-shadow:0 0 0 1px rgba(29,185,84,.45),0 20px 60px -14px rgba(29,185,84,.7)}}
+  /* running border */
+  .feat::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;z-index:-1;
+    background:conic-gradient(from var(--fa,0deg),transparent 0 65%,var(--g) 80%,#b9ffd2 85%,var(--g) 90%,transparent);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:featRot 3.5s linear infinite}
+  @property --fa{syntax:"<angle>";inherits:false;initial-value:0deg}
+  @keyframes featRot{to{--fa:360deg}}
+  .feat .fshine{position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.08) 50%,transparent 65%);transform:translateX(-120%);animation:featShine 4s ease-in-out infinite}
+  @keyframes featShine{0%,60%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+  .feat-top{display:flex;align-items:center;gap:16px}
+  .feat-logo{flex:none;width:62px;height:62px;border-radius:16px;overflow:hidden;box-shadow:0 10px 28px -6px rgba(29,185,84,.7);transition:transform .5s var(--spring)}
+  .feat-logo img{width:100%;height:100%;object-fit:cover;display:block}
+  .feat-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:#0b0b0f;background:var(--g);padding:4px 8px;border-radius:6px;margin-bottom:8px}
+  .feat-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:#0b0b0f;animation:blink 1.4s ease-in-out infinite}
+  .feat h3{font-family:Anton,Sora,sans-serif;font-weight:400;font-size:clamp(30px,8.5vw,40px);letter-spacing:.02em;line-height:1;color:#fff}
+  .feat h3 em{font-style:normal;color:var(--g);text-shadow:0 0 18px rgba(29,185,84,.6)}
+  .feat p{margin-top:14px;color:#a9b3ad;font-size:14px;line-height:1.5}
+  .feat-cta{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:14px;background:var(--g);color:#06110a;font-weight:700;font-size:15px;letter-spacing:.01em;
+    transition:transform .4s var(--spring),box-shadow .35s}
+  .feat-cta span{transition:transform .4s var(--spring)}
+  @media (hover:hover){
+    .feat:hover{transform:translateY(-4px) scale(1.01)}
+    .feat:hover .feat-logo{transform:scale(1.08) rotate(-6deg)}
+    .feat:hover .feat-cta{box-shadow:0 0 30px rgba(29,185,84,.6)}
+    .feat:hover .feat-cta span{transform:translateX(4px)}
+  }
+  .feat:active{transform:scale(.97)}
+  .feat.hide{opacity:0;transform:translateY(22px)}
+  .feat{transition:transform .55s var(--spring),box-shadow .4s,opacity .7s var(--ease)}
 
   .fx{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s var(--ease)}
   .fx.in{opacity:1;transform:none}
@@ -253,6 +289,19 @@
     <div class="meta fx"><span class="live">550K+ followers</span></div>
   </section>
 
+  <a class="feat hide" id="feat" href="https://seeder.gg/r/alextatanee" target="_blank" rel="noopener">
+    <span class="fshine"></span>
+    <div class="feat-top">
+      <div class="feat-logo"><img id="featImg" alt=""></div>
+      <div>
+        <div class="feat-badge">MAKE MONEY</div>
+        <h3>1K VIEWS = <em>$1</em></h3>
+      </div>
+    </div>
+    <p>Get paid for the views on your videos. Create your free account in 1 minute.</p>
+    <div class="feat-cta">Start earning <span>→</span></div>
+  </a>
+
   <div class="list" id="list"></div>
 
   <section class="promo fx">
@@ -288,7 +337,6 @@ const IMG = {
 const LINKS = [
   {title:"TikTok",                    sub:"@alextatanee_",            icon:"tiktok", cls:"i-tt",   img:"", url:"https://www.tiktok.com/@alextatanee_"},
   {title:"Instagram",                 sub:"DM for promos here",       icon:"insta",  cls:"i-ig",   img:"", url:"https://www.instagram.com/alextatanee/"},
-  {title:"1K Views = $1",  sub:"Create your account",      icon:"bolt",   cls:"i-cash", img:IMG.views, url:"https://seeder.gg/r/alextatanee"},
   {title:"My Quality",                sub:"Settings for max quality", icon:"star",   cls:"i-star", img:IMG.quality, url:"https://payhip.com/alextatanee"},
   {title:"Portfolio",                 sub:"About me",                 icon:"play",   cls:"i-red",  img:"portfolio.jpg.jpg", url:"https://alextatane.github.io/alextatanee.github.io/"},
   {title:"Donate",                    sub:"Support me via PayPal",    icon:"paypal", cls:"i-white", img:IMG.paypal, url:"https://paypal.me/AlexyTitren"},
@@ -307,6 +355,7 @@ list.innerHTML=LINKS.map(l=>`
     <div class="txt"><b>${l.title}${l.tag?` <span class="tag">${l.tag}</span>`:''}</b><small>${l.sub}</small></div>
     <span class="chev">${arrow}${arrow}</span>
   </a>`).join('');
+document.getElementById('featImg').src=IMG.views;
 document.getElementById('l-business').href=BUSINESS_URL;
 document.getElementById('l-business-top').href=BUSINESS_URL;
 if(AVATAR_IMG) document.querySelector('.avatar').innerHTML=`<img src="${AVATAR_IMG}" alt="alextatane">`;
@@ -318,10 +367,11 @@ const canHover=matchMedia('(hover:hover)').matches;
 /* ---------- entrance ---------- */
 const fx=[...document.querySelectorAll('.fx')];
 const items=[...document.querySelectorAll('.item')];
-if(reduce){ fx.forEach(e=>e.classList.add('in')); items.forEach(e=>e.classList.remove('hide')); }
+if(reduce){ fx.forEach(e=>e.classList.add('in')); items.forEach(e=>e.classList.remove('hide')); document.getElementById('feat').classList.remove('hide'); }
 else{
   fx.forEach((e,i)=>setTimeout(()=>e.classList.add('in'),80+i*90));
-  items.forEach((e,i)=>setTimeout(()=>e.classList.remove('hide'),380+i*75));
+  setTimeout(()=>document.getElementById('feat').classList.remove('hide'),320);
+  items.forEach((e,i)=>setTimeout(()=>e.classList.remove('hide'),480+i*75));
   const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);} }));
   document.querySelectorAll('.about,.promo').forEach(e=>io.observe(e));
 }
