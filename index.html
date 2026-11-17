@@ -240,17 +240,12 @@
     requestAnimationFrame(()=>requestAnimationFrame(()=>{ fl.style.transition=`opacity ${dur}ms ease-out`; fl.style.opacity=0; })); }
   function shake(){ el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
 
-  // 2. one letter at a time: each one replaces the previous, with a flash + shake
-  const start=0;
-  letters.forEach((c,i)=>at(start+i*STEP,()=>{
-    big.classList.remove('on'); void big.offsetWidth; big.textContent=c; big.dataset.t=c; big.classList.add('on');
-    flash(i%3===0?.6:.3,130,i%2===1); shake(); }));
-  const end=start+letters.length*STEP;
-  // 3. full name slams in, glitch + strobe, then big white flash and cut to the site
-  at(end,()=>{ big.style.display='none'; w.classList.add('show'); flash(1,160); shake(); });
-  at(end+200,()=>{ el.classList.add('glitch'); flash(.6,80,true); });
-  at(end+360,()=>flash(.8,80));
-  at(end+650,finish);
+  // full name appears directly with the glitch, then cut to the site
+  big.style.display='none';
+  at(0,()=>{ w.classList.add('show'); flash(1,160); shake(); });
+  at(150,()=>{ el.classList.add('glitch'); flash(.6,80,true); });
+  at(380,()=>flash(.8,80));
+  at(1000,finish);
   function finish(){ if(done) return; done=true; timers.forEach(clearTimeout);
     el.classList.remove('glitch'); flash(1,380); el.classList.add('out'); setTimeout(()=>el.classList.add('gone'),460); }
   el.addEventListener('click',finish); // tap to skip
